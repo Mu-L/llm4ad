@@ -563,6 +563,8 @@ def exit_run():
     root.destroy()
     sys.exit(0)
 
+def show_frame(frame, button):
+    frame.tkraise()
 
 ###############################################################################
 
@@ -591,27 +593,48 @@ if __name__ == '__main__':
 
     top_frame = ttk.Frame(root, height=30, bootstyle="info")
     top_frame.pack(fill='x')
-    link_doc = ttk.Button(top_frame, image=photoimage_doc, command=open_doc_link, bootstyle="info")
-    link_doc.pack(side=ttk.LEFT, padx=3)
-    link_git = ttk.Button(top_frame, image=photoimage_git, command=open_github_link, bootstyle="info")
-    link_git.pack(side=ttk.LEFT, padx=3)
-    link_web = ttk.Button(top_frame, image=photoimage_web, command=open_website_link, bootstyle="info")
-    link_web.pack(side=ttk.LEFT, padx=3)
-    link_qq = ttk.Button(top_frame, image=photoimage_qq, command=open_qq_link, bootstyle="info")
-    link_qq.pack(side=ttk.LEFT, padx=3)
 
+    # 创建底部 Frame
     bottom_frame = ttk.Frame(root)
     bottom_frame.pack(fill='both', expand=True)
-    left_frame = ttk.Frame(bottom_frame)
-    left_frame.grid(row=0, column=0, sticky="nsew")
-    ttk.Separator(bottom_frame, orient='vertical', bootstyle="secondary").grid(row=0, column=1, sticky="ns")
-    right_frame = ttk.Frame(bottom_frame)
-    right_frame.grid(row=0, column=2, sticky="nsew")
+
+    # 创建两个 Frame 用于切换
+    frame1 = ttk.Frame(bottom_frame)
+    frame2 = ttk.Frame(bottom_frame)
+
+    for frame in (frame1, frame2):
+        frame.grid(row=0, column=0, sticky='nsew')
 
     bottom_frame.grid_rowconfigure(0, weight=1)
-    bottom_frame.grid_columnconfigure(0, weight=2)
-    bottom_frame.grid_columnconfigure(1, weight=1)
-    bottom_frame.grid_columnconfigure(2, weight=30)
+    bottom_frame.grid_columnconfigure(0, weight=1)
+
+    button1 = ttk.Button(top_frame, text="Single Experiment", command=lambda: show_frame(frame1, button1))
+    button1.pack(side=tk.LEFT, padx=3)
+
+    button2 = ttk.Button(top_frame, text="Batch Experiments", command=lambda: show_frame(frame2, button2))
+    button2.pack(side=tk.LEFT, padx=3)
+
+    link_doc = ttk.Button(top_frame, image=photoimage_doc, command=open_doc_link, bootstyle="info")
+    link_doc.pack(side=ttk.RIGHT, padx=3)
+    link_git = ttk.Button(top_frame, image=photoimage_git, command=open_github_link, bootstyle="info")
+    link_git.pack(side=ttk.RIGHT, padx=3)
+    link_web = ttk.Button(top_frame, image=photoimage_web, command=open_website_link, bootstyle="info")
+    link_web.pack(side=ttk.RIGHT, padx=3)
+    link_qq = ttk.Button(top_frame, image=photoimage_qq, command=open_qq_link, bootstyle="info")
+    link_qq.pack(side=ttk.RIGHT, padx=3)
+
+    ##########################################################
+
+    left_frame = ttk.Frame(frame1)
+    left_frame.grid(row=0, column=0, sticky="nsew")
+    ttk.Separator(frame1, orient='vertical', bootstyle="secondary").grid(row=0, column=1, sticky="ns")
+    right_frame = ttk.Frame(frame1)
+    right_frame.grid(row=0, column=2, sticky="nsew")
+
+    frame1.grid_rowconfigure(0, weight=1)
+    frame1.grid_columnconfigure(0, weight=2)
+    frame1.grid_columnconfigure(1, weight=1)
+    frame1.grid_columnconfigure(2, weight=30)
 
     #####################################################
 
@@ -619,9 +642,11 @@ if __name__ == '__main__':
     llm_frame.pack(anchor=tk.NW, fill=tk.X, padx=5, pady=5)
 
     for i in range(len(llm_para_value_name_list)):
-        llm_para_entry_list.append(PlaceholderEntry(llm_frame, width=70, bootstyle="dark", placeholder=llm_para_placeholder_list[i]))
+        llm_para_entry_list.append(
+            PlaceholderEntry(llm_frame, width=70, bootstyle="dark", placeholder=llm_para_placeholder_list[i]))
         if i != 0:
-            ttk.Label(llm_frame, text=llm_para_value_name_list[i] + ':').grid(row=i - 1, column=0, sticky='ns', padx=5, pady=5)
+            ttk.Label(llm_frame, text=llm_para_value_name_list[i] + ':').grid(row=i - 1, column=0, sticky='ns', padx=5,
+                                                                              pady=5)
             llm_para_entry_list[-1].grid(row=i - 1, column=1, sticky='ns', padx=5, pady=5)
             llm_frame.grid_rowconfigure(i - 1, weight=1)
 
@@ -661,7 +686,8 @@ if __name__ == '__main__':
 
     ############
 
-    algo_listbox = tk.Listbox(algo_frame, height=6, bg='white', selectbackground='lightgray', font=('Comic Sans MS', 12))
+    algo_listbox = tk.Listbox(algo_frame, height=6, bg='white', selectbackground='lightgray',
+                              font=('Comic Sans MS', 12))
     algo_listbox.pack(anchor=tk.NW, fill='both', expand=True, padx=5, pady=5)
     default_method_index = None
     for _, dict_name, _ in os.walk('../llm4ad/method'):
@@ -685,20 +711,24 @@ if __name__ == '__main__':
             if name != '__pycache__' and name != '_data':
                 radiobutton_list.append(name)
         break
-    combobox = ttk.Combobox(objectives_frame, state='readonly', values=radiobutton_list, textvariable=objectives_var, bootstyle="warning", font=('Comic Sans MS', 12))
+    combobox = ttk.Combobox(objectives_frame, state='readonly', values=radiobutton_list, textvariable=objectives_var,
+                            bootstyle="warning", font=('Comic Sans MS', 12))
     combobox.bind('<<ComboboxSelected>>', problem_type_select)
     combobox.pack(anchor=tk.NW, padx=5, pady=5)
     problem_type_select()
 
     ############
 
-    plot_button = ttk.Button(left_frame, text="Run", command=on_plot_button_click, width=12, bootstyle="primary-outline", state=tk.NORMAL)
+    plot_button = ttk.Button(left_frame, text="Run", command=on_plot_button_click, width=12,
+                             bootstyle="primary-outline", state=tk.NORMAL)
     plot_button.pack(side='left', pady=20, expand=True)
 
-    stop_button = ttk.Button(left_frame, text="Stop", command=stop_run_thread, width=12, bootstyle="warning-outline", state=tk.DISABLED)
+    stop_button = ttk.Button(left_frame, text="Stop", command=stop_run_thread, width=12, bootstyle="warning-outline",
+                             state=tk.DISABLED)
     stop_button.pack(side='left', pady=20, expand=True)
 
-    doc_button = ttk.Button(left_frame, text="Log files", command=open_folder, width=12, bootstyle="dark-outline", state=tk.DISABLED)
+    doc_button = ttk.Button(left_frame, text="Log files", command=open_folder, width=12, bootstyle="dark-outline",
+                            state=tk.DISABLED)
     doc_button.pack(side='left', pady=20, expand=True)
 
     ##########################################################
@@ -736,6 +766,24 @@ if __name__ == '__main__':
     sorting_algorithm = ""
     code_display.insert(tk.END, sorting_algorithm)
     code_display.config(state='disabled')
+
+    ##########################################################
+
+    # frame 2
+    # todo add something in batch experiments
+    # label2 = ttk.Label(frame2, text="这是界面 2", font=("Arial", 16))
+    # label2.pack(pady=10)
+    #
+    # entry2 = ttk.Entry(frame2)
+    # entry2.pack(pady=10)
+    #
+    # button_in_frame2 = ttk.Button(frame2, text="Frame 2 按钮")
+    # button_in_frame2.pack(pady=10)
+
+    ##########################################################
+
+    # 默认显示 Frame 1，并设置按钮状态
+    show_frame(frame1, button1)
 
     ##########################################################
 
