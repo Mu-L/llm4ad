@@ -44,6 +44,14 @@ objectives_var = None
 problem_para_entry_list = []
 problem_para_value_type_list = []
 problem_para_value_name_list = []
+problem_listbox2 = None
+objectives_var2 = None
+algo_listbox2 = None
+selected_algorithms_list = []
+selected_tasks_list = []
+real_algo_listbox2 = None
+real_prob_listbox2 = None
+selected_problems_list = []
 
 llm_para_entry_list = []
 llm_para_entry_list2 = []
@@ -124,6 +132,59 @@ def open_folder():
 
 
 ##########################################################
+
+# todo 2
+def add_algorithm():
+    global algo_listbox2
+    global selected_algorithms_list
+    global real_algo_listbox2
+
+    selected = algo_listbox2.curselection()
+    if not selected:
+        return
+
+    algo_name = algo_listbox2.get(selected[0])
+    if algo_name not in selected_algorithms_list:
+        real_algo_listbox2.insert(tk.END, algo_name)
+        selected_algorithms_list.append(algo_name)
+
+def remove_algorithm():
+    global selected_algorithms_list
+    global real_algo_listbox2
+
+    selected = real_algo_listbox2.curselection()
+    if not selected:
+        return
+
+    algo_name = real_algo_listbox2.get(selected[0])
+    selected_algorithms_list.remove(algo_name)
+    real_algo_listbox2.delete(selected[0])
+
+def add_problem():
+    global problem_listbox2
+    global selected_problems_list
+    global real_prob_listbox2
+
+    selected = problem_listbox2.curselection()
+    if not selected:
+        return
+
+    prob_name = problem_listbox2.get(selected[0])
+    if prob_name not in selected_problems_list:
+        real_prob_listbox2.insert(tk.END, prob_name)
+        selected_problems_list.append(prob_name)
+
+def remove_problem():
+    global selected_problems_list
+    global real_prob_listbox2
+
+    selected = real_prob_listbox2.curselection()
+    if not selected:
+        return
+
+    prob_name = real_prob_listbox2.get(selected[0])
+    selected_problems_list.remove(prob_name)
+    real_prob_listbox2.delete(selected[0])
 
 def on_algo_select(event):
     global selected_algo
@@ -255,6 +316,20 @@ def problem_type_select(event=None):
                 default_problem_index = problem_listbox.size() - 1
     problem_listbox.bind("<<ListboxSelect>>", on_problem_select)
     on_problem_select(problem_listbox.select_set(default_problem_index))
+
+def batch_exp_problem_type_select(event=None):
+    global problem_listbox2
+    global objectives_var2
+
+    if problem_listbox2 is not None:
+        problem_listbox2.destroy()
+
+    problem_listbox2 = tk.Listbox(problem_frame2, height=6, bg='white', selectbackground='lightgray', font=('Comic Sans MS', 12))
+    problem_listbox2.pack(anchor=tk.NW, fill='both', expand=True, padx=5, pady=5)
+    for _, dict_name, _ in os.walk(f'../llm4ad/task/{objectives_var2.get()}'):
+        for name in dict_name:
+            if name != '__pycache__' and name != '_data':
+                problem_listbox2.insert(tk.END, name)
 
 
 ###############################################################################
@@ -771,7 +846,7 @@ if __name__ == '__main__':
     ##########################################################
 
     # frame 2
-    # todo add something in batch experiments
+    # todo 1 add something in batch experiments
     # label2 = ttk.Label(frame2, text="这是界面 2", font=("Arial", 16))
     # label2.pack(pady=10)
     #
@@ -780,6 +855,8 @@ if __name__ == '__main__':
     #
     # button_in_frame2 = ttk.Button(frame2, text="Frame 2 按钮")
     # button_in_frame2.pack(pady=10)
+
+    # todo 1 后面可能需要添加变量名
 
     left_frame2 = ttk.Frame(frame2)
     left_frame2.grid(row=0, column=0, sticky="nsew")
@@ -797,7 +874,7 @@ if __name__ == '__main__':
     llm_frame2 = ttk.Labelframe(left_frame2, text="LLM setups", bootstyle="dark")
     llm_frame2.pack(anchor=tk.NW, fill=tk.X, padx=5, pady=5)
 
-    # todo 这里新建了一个entry_list，可能存值和读值的时候会有点问题
+    # todo 1 这里新建了一个entry_list，可能存值和读值的时候会有点问题
     for i in range(len(llm_para_value_name_list)):
         llm_para_entry_list2.append(
             PlaceholderEntry(llm_frame2, width=70, bootstyle="dark", placeholder=llm_para_placeholder_list[i]))
@@ -829,15 +906,15 @@ if __name__ == '__main__':
     algo_frame2 = ttk.Labelframe(container_frame_1_2, text="Methods", bootstyle="primary")
     algo_frame2.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
 
-    # todo 加入两个button
+    # todo 2 加入两个button，为这两个button绑定函数
 
     button_frame_algo_2 = tk.Frame(container_frame_1_2)
     button_frame_algo_2.grid(row=0, column=1, sticky="nsew", padx=5, pady=5)
 
-    add_button2 = ttk.Button(button_frame_algo_2, text="Add-->", width=12,
+    add_button2 = ttk.Button(button_frame_algo_2, text="Add-->", width=12, command=add_algorithm,
                               bootstyle="primary-outline", state=tk.NORMAL)
     add_button2.grid(row=1, column=1, pady=5)
-    delete_button2 = ttk.Button(button_frame_algo_2, text="<--Delete", width=12,
+    delete_button2 = ttk.Button(button_frame_algo_2, text="<--Delete", width=12, command=remove_algorithm,
                              bootstyle="primary-outline", state=tk.NORMAL)
     delete_button2.grid(row=3, column=1, pady=5)
 
@@ -858,6 +935,20 @@ if __name__ == '__main__':
     container_frame_1_2.grid_columnconfigure(1, weight=3)
     container_frame_1_2.grid_columnconfigure(2, weight=10)
 
+    real_algo_listbox2 = tk.Listbox(real_algo_frame2, height=6, bg='white', selectbackground='lightgray',
+                               font=('Comic Sans MS', 12))
+    real_algo_listbox2.pack(anchor=tk.NW, fill='both', expand=True, padx=5, pady=5)
+
+    ###
+
+    algo_listbox2 = tk.Listbox(algo_frame2, height=6, bg='white', selectbackground='lightgray',
+                              font=('Comic Sans MS', 12))
+    algo_listbox2.pack(anchor=tk.NW, fill='both', expand=True, padx=5, pady=5)
+    for _, dict_name, _ in os.walk('../llm4ad/method'):
+        for name in dict_name:
+            if name != '__pycache__':
+                algo_listbox2.insert(tk.END, name)
+
     ###
 
     container_frame_2_2 = tk.Frame(left_frame2)
@@ -869,10 +960,11 @@ if __name__ == '__main__':
     button_frame_prob_2 = tk.Frame(container_frame_2_2)
     button_frame_prob_2.grid(row=0, column=1, sticky="nsew")
 
-    add_button22 = ttk.Button(button_frame_prob_2, text="Add-->", width=12,
+    # todo 2 为这两个button绑定函数
+    add_button22 = ttk.Button(button_frame_prob_2, text="Add-->", width=12, command=add_problem,
                              bootstyle="primary-outline", state=tk.NORMAL)
     add_button22.grid(row=1, column=1, pady=5)
-    delete_button22 = ttk.Button(button_frame_prob_2, text="<--Delete", width=12,
+    delete_button22 = ttk.Button(button_frame_prob_2, text="<--Delete", width=12, command=remove_problem,
                                 bootstyle="primary-outline", state=tk.NORMAL)
     delete_button22.grid(row=3, column=1, pady=5)
 
@@ -893,9 +985,27 @@ if __name__ == '__main__':
     container_frame_2_2.grid_columnconfigure(1, weight=3)
     container_frame_2_2.grid_columnconfigure(2, weight=10)
 
+    real_prob_listbox2 = tk.Listbox(real_problem_frame2, height=6, bg='white', selectbackground='lightgray',
+                                    font=('Comic Sans MS', 12))
+    real_prob_listbox2.pack(anchor=tk.NW, fill='both', expand=True, padx=5, pady=5)
+
     ###
 
-    # todo 为4个frame里面加入东西
+    objectives_var2 = tk.StringVar(value="optimization")
+    objectives_frame2 = tk.Frame(problem_frame2, bg='white')
+    objectives_frame2.pack(anchor=tk.NW, pady=5)
+    radiobutton_list2 = []
+    for _, dict_name, _ in os.walk('../llm4ad/task'):
+        for name in dict_name:
+            if name != '__pycache__' and name != '_data':
+                radiobutton_list2.append(name)
+        break
+    combobox2 = ttk.Combobox(objectives_frame2, state='readonly', values=radiobutton_list2, textvariable=objectives_var2,
+                            bootstyle="warning", font=('Comic Sans MS', 12))
+    combobox2.pack(anchor=tk.NW, padx=5, pady=5)
+
+    combobox2.bind('<<ComboboxSelected>>', batch_exp_problem_type_select)
+    batch_exp_problem_type_select()
 
     ###
 
@@ -910,7 +1020,7 @@ if __name__ == '__main__':
 
     ###
 
-    # todo 为按钮绑定函数
+    # todo 1 为按钮绑定函数
     # plot_button2 = ttk.Button(left_frame2, text="Run", command=on_plot_button_click, width=12,
     #                          bootstyle="primary-outline", state=tk.NORMAL)
     plot_button2 = ttk.Button(left_frame2, text="Run", width=12,
@@ -925,7 +1035,7 @@ if __name__ == '__main__':
 
     ###
 
-    # todo 右边显示表格
+    # todo 1 右边显示表格
 
     data_temp = [
         [1.23, 4.56, 7.89, 2.34],
