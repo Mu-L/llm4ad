@@ -46,6 +46,7 @@ problem_para_value_type_list = []
 problem_para_value_name_list = []
 
 llm_para_entry_list = []
+llm_para_entry_list2 = []
 llm_para_value_name_list = ['name', 'host', 'key', 'model']
 llm_para_default_value_list = ['HttpsApi', '', '', '']
 llm_para_placeholder_list = ['HttpsApi', 'api.bltcy.top', 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', 'gpt-4o-mini-2024-07-18']
@@ -780,7 +781,175 @@ if __name__ == '__main__':
     # button_in_frame2 = ttk.Button(frame2, text="Frame 2 按钮")
     # button_in_frame2.pack(pady=10)
 
-    ##########################################################
+    left_frame2 = ttk.Frame(frame2)
+    left_frame2.grid(row=0, column=0, sticky="nsew")
+    ttk.Separator(frame2, orient='vertical', bootstyle="secondary").grid(row=0, column=1, sticky="ns")
+    right_frame2 = ttk.Frame(frame2)
+    right_frame2.grid(row=0, column=2, sticky="nsew")
+
+    frame2.grid_rowconfigure(0, weight=1)
+    frame2.grid_columnconfigure(0, weight=2)
+    frame2.grid_columnconfigure(1, weight=1)
+    frame2.grid_columnconfigure(2, weight=30)
+
+    ###
+
+    llm_frame2 = ttk.Labelframe(left_frame2, text="LLM setups", bootstyle="dark")
+    llm_frame2.pack(anchor=tk.NW, fill=tk.X, padx=5, pady=5)
+
+    # todo 这里新建了一个entry_list，可能存值和读值的时候会有点问题
+    for i in range(len(llm_para_value_name_list)):
+        llm_para_entry_list2.append(
+            PlaceholderEntry(llm_frame2, width=70, bootstyle="dark", placeholder=llm_para_placeholder_list[i]))
+        if i != 0:
+            ttk.Label(llm_frame2, text=llm_para_value_name_list[i] + ':').grid(row=i - 1, column=0, sticky='ns', padx=5,
+                                                                              pady=5)
+            llm_para_entry_list2[-1].grid(row=i - 1, column=1, sticky='ns', padx=5, pady=5)
+            llm_frame2.grid_rowconfigure(i - 1, weight=1)
+
+    llm_frame2.grid_columnconfigure(0, weight=1)
+    llm_frame2.grid_columnconfigure(1, weight=1)
+
+    with_default_parameter = False
+    if with_default_parameter:
+        for i in range(len(llm_para_value_name_list)):
+            llm_para_entry_list2[i].delete(0, 'end')
+            llm_para_entry_list2[i].configure(foreground=llm_para_entry_list2[i].default_fg_color)
+            llm_para_entry_list2[i].insert(0, str(llm_para_default_value_list[i]))
+    else:
+        llm_para_entry_list2[0].delete(0, 'end')
+        llm_para_entry_list2[0].configure(foreground=llm_para_entry_list2[0].default_fg_color)
+        llm_para_entry_list2[0].insert(0, str(llm_para_default_value_list[0]))
+
+    ###
+
+    container_frame_1_2 = tk.Frame(left_frame2)
+    container_frame_1_2.pack(fill=tk.BOTH, expand=True)
+
+    algo_frame2 = ttk.Labelframe(container_frame_1_2, text="Methods", bootstyle="primary")
+    algo_frame2.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
+
+    # todo 加入两个button
+
+    button_frame_algo_2 = tk.Frame(container_frame_1_2)
+    button_frame_algo_2.grid(row=0, column=1, sticky="nsew", padx=5, pady=5)
+
+    add_button2 = ttk.Button(button_frame_algo_2, text="Add-->", width=12,
+                              bootstyle="primary-outline", state=tk.NORMAL)
+    add_button2.grid(row=1, column=1, pady=5)
+    delete_button2 = ttk.Button(button_frame_algo_2, text="<--Delete", width=12,
+                             bootstyle="primary-outline", state=tk.NORMAL)
+    delete_button2.grid(row=3, column=1, pady=5)
+
+    button_frame_algo_2.grid_rowconfigure(0, weight=6)
+    button_frame_algo_2.grid_rowconfigure(1, weight=10)
+    button_frame_algo_2.grid_rowconfigure(2, weight=6)
+    button_frame_algo_2.grid_rowconfigure(3, weight=10)
+    button_frame_algo_2.grid_rowconfigure(4, weight=6)
+    button_frame_algo_2.grid_columnconfigure(0, weight=2)
+    button_frame_algo_2.grid_columnconfigure(1, weight=4)
+    button_frame_algo_2.grid_columnconfigure(2, weight=2)
+
+    real_algo_frame2 = ttk.Labelframe(container_frame_1_2, text="Selected Methods", bootstyle="warning")
+    real_algo_frame2.grid(row=0, column=2, sticky="nsew", padx=5, pady=5)
+
+    container_frame_1_2.grid_rowconfigure(0, weight=10)
+    container_frame_1_2.grid_columnconfigure(0, weight=10)
+    container_frame_1_2.grid_columnconfigure(1, weight=3)
+    container_frame_1_2.grid_columnconfigure(2, weight=10)
+
+    ###
+
+    container_frame_2_2 = tk.Frame(left_frame2)
+    container_frame_2_2.pack(fill=tk.BOTH, expand=True)
+
+    problem_frame2 = ttk.Labelframe(container_frame_2_2, text="Tasks", bootstyle="primary")
+    problem_frame2.grid(row=0, column=0, sticky="nsew")
+
+    button_frame_prob_2 = tk.Frame(container_frame_2_2)
+    button_frame_prob_2.grid(row=0, column=1, sticky="nsew")
+
+    add_button22 = ttk.Button(button_frame_prob_2, text="Add-->", width=12,
+                             bootstyle="primary-outline", state=tk.NORMAL)
+    add_button22.grid(row=1, column=1, pady=5)
+    delete_button22 = ttk.Button(button_frame_prob_2, text="<--Delete", width=12,
+                                bootstyle="primary-outline", state=tk.NORMAL)
+    delete_button22.grid(row=3, column=1, pady=5)
+
+    button_frame_prob_2.grid_rowconfigure(0, weight=6)
+    button_frame_prob_2.grid_rowconfigure(1, weight=10)
+    button_frame_prob_2.grid_rowconfigure(2, weight=6)
+    button_frame_prob_2.grid_rowconfigure(3, weight=10)
+    button_frame_prob_2.grid_rowconfigure(4, weight=6)
+    button_frame_prob_2.grid_columnconfigure(0, weight=2)
+    button_frame_prob_2.grid_columnconfigure(1, weight=4)
+    button_frame_prob_2.grid_columnconfigure(2, weight=2)
+
+    real_problem_frame2 = ttk.Labelframe(container_frame_2_2, text="Selected Tasks", bootstyle="warning")
+    real_problem_frame2.grid(row=0, column=2, sticky="nsew")
+
+    container_frame_2_2.grid_rowconfigure(0, weight=10)
+    container_frame_2_2.grid_columnconfigure(0, weight=10)
+    container_frame_2_2.grid_columnconfigure(1, weight=3)
+    container_frame_2_2.grid_columnconfigure(2, weight=10)
+
+    ###
+
+    # todo 为4个frame里面加入东西
+
+    ###
+
+    container_frame_3_2 = tk.Frame(left_frame2)
+    container_frame_3_2.pack(fill=tk.BOTH, expand=True)
+
+    para_setting_frame2 = ttk.Labelframe(container_frame_3_2, text="Parameter Settings", bootstyle="primary")
+    para_setting_frame2.grid(row=0, column=0, sticky="nsew")
+
+    container_frame_3_2.grid_rowconfigure(0, weight=10)
+    container_frame_3_2.grid_columnconfigure(0, weight=10)
+
+    ###
+
+    # todo 为按钮绑定函数
+    # plot_button2 = ttk.Button(left_frame2, text="Run", command=on_plot_button_click, width=12,
+    #                          bootstyle="primary-outline", state=tk.NORMAL)
+    plot_button2 = ttk.Button(left_frame2, text="Run", width=12,
+                              bootstyle="primary-outline", state=tk.NORMAL)
+    plot_button2.pack(side='left', pady=20, expand=True)
+
+    # stop_button2 = ttk.Button(left_frame2, text="Stop", command=stop_run_thread, width=12, bootstyle="warning-outline",
+    #                          state=tk.DISABLED)
+    stop_button2 = ttk.Button(left_frame2, text="Stop", width=12, bootstyle="warning-outline",
+                              state=tk.DISABLED)
+    stop_button2.pack(side='left', pady=20, expand=True)
+
+    ###
+
+    # todo 右边显示表格
+
+    data_temp = [
+        [1.23, 4.56, 7.89, 2.34],
+        [5.67, 8.90, 1.23, 4.56],
+        [7.89, 2.34, 5.67, 8.90],
+        [1.23, 4.56, 7.89, 2.34],
+        [5.67, 8.90, 1.23, 4.56]
+    ]
+    columns = [f"列 {i + 1}" for i in range(len(data_temp[0]))]
+    tree_temp = ttk.Treeview(right_frame2, columns=columns, show="headings")
+
+    # 设置表头
+    for col in columns:
+        tree_temp.heading(col, text=col)
+        tree_temp.column(col, width=80, anchor="center")
+
+    # 插入数据
+    for row in data_temp:
+        tree_temp.insert("", "end", values=row)
+
+    # 显示表格
+    tree_temp.pack(padx=10, pady=10)
+
+    ###
 
     # 默认显示 Frame 1，并设置按钮状态
     show_frame(frame1, button1)
