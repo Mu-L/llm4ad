@@ -25,6 +25,5 @@ llm4ad.egg-info/dependency_links.txt
 
 .env
 .venv/
-codex/
 #LLaMEA logs content in this directory.
 **/exp-*
